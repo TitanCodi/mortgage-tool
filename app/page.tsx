@@ -5,77 +5,100 @@ export default function Home() {
   const [loan, setLoan] = useState(300000);
   const [rate, setRate] = useState(6.5);
   const [years, setYears] = useState(30);
+
   const [payment, setPayment] = useState<number | null>(null);
+  const [totalInterest, setTotalInterest] = useState<number | null>(null);
+  const [totalCost, setTotalCost] = useState<number | null>(null);
 
   function calculateMortgage() {
     const monthlyRate = rate / 100 / 12;
-    const totalPayments = years * 12;
+    const payments = years * 12;
 
     const monthlyPayment =
       loan *
-      (monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) /
-      (Math.pow(1 + monthlyRate, totalPayments) - 1);
+      (monthlyRate * Math.pow(1 + monthlyRate, payments)) /
+      (Math.pow(1 + monthlyRate, payments) - 1);
+
+    const totalPaid = monthlyPayment * payments;
+    const interest = totalPaid - loan;
 
     setPayment(monthlyPayment);
+    setTotalInterest(interest);
+    setTotalCost(totalPaid);
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-10 flex flex-col items-center">
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center p-10">
 
-      <h1 className="text-4xl font-bold mb-3 text-center">
+      <h1 className="text-4xl font-bold mb-2 text-center">
         Mortgage Payment Calculator
       </h1>
 
-      <p className="text-gray-600 mb-10 text-center max-w-xl">
-        Calculate your monthly mortgage payment instantly and see how much your
-        home loan will cost over time.
+      <p className="text-gray-600 mb-10 text-center">
+        Instantly calculate your monthly mortgage payment and total loan cost.
       </p>
 
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-lg">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
 
-        <div className="mb-4">
-          <label className="block font-medium">Loan Amount ($)</label>
-          <input
-            type="number"
-            value={loan}
-            onChange={(e) => setLoan(Number(e.target.value))}
-            className="w-full p-3 border rounded mt-1"
-          />
-        </div>
+        <label className="block font-medium mb-1">Loan Amount ($)</label>
+        <input
+          type="number"
+          value={loan}
+          onChange={(e) => setLoan(Number(e.target.value))}
+          className="w-full border p-3 rounded mb-4"
+        />
 
-        <div className="mb-4">
-          <label className="block font-medium">Interest Rate (%)</label>
-          <input
-            type="number"
-            value={rate}
-            onChange={(e) => setRate(Number(e.target.value))}
-            className="w-full p-3 border rounded mt-1"
-          />
-        </div>
+        <label className="block font-medium mb-1">Interest Rate (%)</label>
+        <input
+          type="number"
+          value={rate}
+          onChange={(e) => setRate(Number(e.target.value))}
+          className="w-full border p-3 rounded mb-4"
+        />
 
-        <div className="mb-6">
-          <label className="block font-medium">Loan Term (Years)</label>
-          <input
-            type="number"
-            value={years}
-            onChange={(e) => setYears(Number(e.target.value))}
-            className="w-full p-3 border rounded mt-1"
-          />
-        </div>
+        <label className="block font-medium mb-1">Loan Term (Years)</label>
+        <input
+          type="number"
+          value={years}
+          onChange={(e) => setYears(Number(e.target.value))}
+          className="w-full border p-3 rounded mb-6"
+        />
 
         <button
           onClick={calculateMortgage}
-          className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
         >
-          Calculate Payment
+          Calculate
         </button>
 
         {payment && (
-          <div className="mt-8 bg-blue-50 p-6 rounded-lg text-center">
-            <p className="text-gray-600">Estimated Monthly Payment</p>
-            <p className="text-3xl font-bold text-blue-600">
-              ${payment.toFixed(2)}
-            </p>
+          <div className="mt-8 space-y-4">
+
+            <div className="bg-blue-50 p-6 rounded-lg text-center">
+              <p className="text-gray-500">Monthly Payment</p>
+              <p className="text-3xl font-bold text-blue-600">
+                ${payment.toFixed(2)}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="bg-gray-100 p-4 rounded text-center">
+                <p className="text-gray-500 text-sm">Total Interest</p>
+                <p className="font-bold">
+                  ${totalInterest?.toFixed(0)}
+                </p>
+              </div>
+
+              <div className="bg-gray-100 p-4 rounded text-center">
+                <p className="text-gray-500 text-sm">Total Cost</p>
+                <p className="font-bold">
+                  ${totalCost?.toFixed(0)}
+                </p>
+              </div>
+
+            </div>
+
           </div>
         )}
 
