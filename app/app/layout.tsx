@@ -1,17 +1,20 @@
+import "./globals.css";
+
+export const metadata = {
+  title: "Mortgage Tools",
+  description: "Mortgage calculators and amortization tools",
+};
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
   return (
-
     <html lang="en">
-
       <body className="bg-gray-50 text-gray-900">
 
         <header className="bg-white shadow">
-
           <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
 
             <h1 className="text-xl font-bold">
@@ -24,35 +27,24 @@ export default function RootLayout({
                 Home
               </a>
 
-              <a href="/mortgage" className="hover:text-blue-600">
+              <a href="/" className="hover:text-blue-600">
                 Calculator
-              </a>
-
-              <a href="/amortization" className="hover:text-blue-600">
-                Amortization
               </a>
 
             </nav>
 
           </div>
-
         </header>
 
-        <main>
-
+        <main className="max-w-6xl mx-auto">
           {children}
-
         </main>
 
         <footer className="mt-20 py-10 text-center text-sm text-gray-500">
-
           Mortgage Tools © {new Date().getFullYear()}
-
         </footer>
 
       </body>
-
     </html>
-
-  )
+  );
 }
