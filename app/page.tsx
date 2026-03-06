@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer
+} from "recharts";
+
 export default function Home() {
 
   const [loan, setLoan] = useState(300000);
@@ -54,6 +64,7 @@ export default function Home() {
     }
 
     const totalInterestNew = totalPaid - loan;
+
     const interestSavedValue =
       (totalPaidOriginal - loan) - totalInterestNew;
 
@@ -76,7 +87,7 @@ export default function Home() {
       </h1>
 
       <p className="text-gray-600 mb-10 text-center">
-        Calculate mortgage payments and see how extra payments reduce your loan.
+        Calculate your mortgage and see how extra payments reduce your loan.
       </p>
 
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
@@ -105,7 +116,10 @@ export default function Home() {
           className="w-full border p-3 rounded mb-4"
         />
 
-        <label className="block font-medium mb-1">Extra Monthly Payment ($)</label>
+        <label className="block font-medium mb-1">
+          Extra Monthly Payment ($)
+        </label>
+
         <input
           type="number"
           value={extra}
@@ -160,6 +174,46 @@ export default function Home() {
         <div className="mt-12 w-full max-w-5xl">
 
           <h2 className="text-2xl font-bold mb-4 text-center">
+            Loan Balance Over Time
+          </h2>
+
+          <div style={{ width: "100%", height: 300 }}>
+
+            <ResponsiveContainer>
+
+              <LineChart data={schedule}>
+
+                <CartesianGrid strokeDasharray="3 3" />
+
+                <XAxis dataKey="month" />
+
+                <YAxis />
+
+                <Tooltip />
+
+                <Line
+                  type="monotone"
+                  dataKey="balance"
+                  stroke="#2563eb"
+                  strokeWidth={3}
+                  dot={false}
+                />
+
+              </LineChart>
+
+            </ResponsiveContainer>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {schedule.length > 0 && (
+
+        <div className="mt-12 w-full max-w-5xl">
+
+          <h2 className="text-2xl font-bold mb-4 text-center">
             Amortization Schedule
           </h2>
 
@@ -202,6 +256,5 @@ export default function Home() {
       )}
 
     </main>
-
   );
 }
