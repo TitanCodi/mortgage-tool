@@ -7,10 +7,12 @@ export default function Home() {
   const [loan, setLoan] = useState(300000);
   const [rate, setRate] = useState(6.5);
   const [years, setYears] = useState(30);
+  const [extra, setExtra] = useState(0);
 
   const [payment, setPayment] = useState<number | null>(null);
-  const [totalInterest, setTotalInterest] = useState<number | null>(null);
-  const [totalCost, setTotalCost] = useState<number | null>(null);
+  const [interestSaved, setInterestSaved] = useState<number | null>(null);
+  const [yearsSaved, setYearsSaved] = useState<number | null>(null);
+
   const [schedule, setSchedule] = useState<any[]>([]);
 
   function calculateMortgage() {
@@ -18,31 +20,32 @@ export default function Home() {
     const monthlyRate = rate / 100 / 12;
     const payments = years * 12;
 
-    const monthlyPayment =
+    const basePayment =
       loan *
       (monthlyRate * Math.pow(1 + monthlyRate, payments)) /
       (Math.pow(1 + monthlyRate, payments) - 1);
 
-    const totalPaid = monthlyPayment * payments;
-    const interestPaid = totalPaid - loan;
-
-    setPayment(monthlyPayment);
-    setTotalInterest(interestPaid);
-    setTotalCost(totalPaid);
+    const totalPaidOriginal = basePayment * payments;
 
     let balance = loan;
+    let month = 0;
     let table = [];
+    let totalPaid = 0;
 
-    for (let month = 1; month <= payments; month++) {
+    while (balance > 0 && month < 1000) {
 
       const interest = balance * monthlyRate;
-      const principal = monthlyPayment - interest;
+      const principal = basePayment + extra - interest;
 
       balance -= principal;
 
+      totalPaid += basePayment + extra;
+
+      month++;
+
       table.push({
         month,
-        payment: monthlyPayment,
+        payment: basePayment + extra,
         interest,
         principal,
         balance: balance > 0 ? balance : 0
@@ -50,7 +53,18 @@ export default function Home() {
 
     }
 
+    const totalInterestNew = totalPaid - loan;
+    const interestSavedValue =
+      (totalPaidOriginal - loan) - totalInterestNew;
+
+    const yearsSavedValue =
+      years - month / 12;
+
+    setPayment(basePayment);
+    setInterestSaved(interestSavedValue);
+    setYearsSaved(yearsSavedValue);
     setSchedule(table);
+
   }
 
   return (
@@ -58,11 +72,11 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 flex flex-col items-center p-10">
 
       <h1 className="text-4xl font-bold mb-2 text-center">
-        Mortgage & Loan Comparison Calculator
+        Mortgage Payment Calculator
       </h1>
 
       <p className="text-gray-600 mb-10 text-center">
-        Instantly calculate your monthly mortgage payment.
+        Calculate mortgage payments and see how extra payments reduce your loan.
       </p>
 
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
@@ -88,6 +102,14 @@ export default function Home() {
           type="number"
           value={years}
           onChange={(e) => setYears(Number(e.target.value))}
+          className="w-full border p-3 rounded mb-4"
+        />
+
+        <label className="block font-medium mb-1">Extra Monthly Payment ($)</label>
+        <input
+          type="number"
+          value={extra}
+          onChange={(e) => setExtra(Number(e.target.value))}
           className="w-full border p-3 rounded mb-6"
         />
 
@@ -103,7 +125,7 @@ export default function Home() {
           <div className="mt-8 space-y-4">
 
             <div className="bg-blue-50 p-6 rounded-lg text-center">
-              <p className="text-gray-500">Monthly Payment</p>
+              <p className="text-gray-500">Base Monthly Payment</p>
               <p className="text-3xl font-bold text-blue-600">
                 ${payment.toFixed(2)}
               </p>
@@ -112,16 +134,16 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
 
               <div className="bg-gray-100 p-4 rounded text-center">
-                <p className="text-gray-500 text-sm">Total Interest</p>
+                <p className="text-gray-500 text-sm">Interest Saved</p>
                 <p className="font-bold">
-                  ${totalInterest?.toFixed(0)}
+                  ${interestSaved?.toFixed(0)}
                 </p>
               </div>
 
               <div className="bg-gray-100 p-4 rounded text-center">
-                <p className="text-gray-500 text-sm">Total Cost</p>
+                <p className="text-gray-500 text-sm">Years Saved</p>
                 <p className="font-bold">
-                  ${totalCost?.toFixed(0)}
+                  {yearsSaved?.toFixed(1)}
                 </p>
               </div>
 
@@ -135,7 +157,7 @@ export default function Home() {
 
       {schedule.length > 0 && (
 
-        <div className="mt-12 w-full max-w-4xl">
+        <div className="mt-12 w-full max-w-5xl">
 
           <h2 className="text-2xl font-bold mb-4 text-center">
             Amortization Schedule
