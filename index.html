@@ -1120,8 +1120,11 @@
   </div>
 </section>
 
+<!-- Rates anchor sits OUTSIDE the hero so nav link clears it completely -->
+<div id="rates" style="position:relative; top:-80px; visibility:hidden; pointer-events:none;"></div>
+
 <!-- MAIN CONTENT -->
-<div class="main-wrap" id="rates">
+<div class="main-wrap">
 
   <!-- LIVE RATES -->
   <div class="rates-bar">
@@ -1769,9 +1772,9 @@ async function fetchRates() {
   const grid = document.getElementById('ratesGrid');
 
   const seriesMeta = [
-    { id: 'MORTGAGE30US', label: '30-Year Fixed',    color: '#00897B' },
-    { id: 'MORTGAGE15US', label: '15-Year Fixed',    color: '#1A3A5C' },
-    { id: 'MORTGAGE5US',  label: '5/1 ARM',          color: '#F5A623' },
+    { id: 'MORTGAGE30US', label: '30-Year Fixed', color: '#00897B' },
+    { id: 'MORTGAGE15US', label: '15-Year Fixed', color: '#1A3A5C' },
+    { id: 'MORTGAGE5US',  label: '5/1 ARM',       color: '#F5A623' },
   ];
 
   try {
@@ -1780,37 +1783,35 @@ async function fetchRates() {
     const data = await res.json();
 
     grid.innerHTML = '';
-    let anyDate = null;
-
-    seriesMeta.forEach(s => {
-      const r = data[s.id];
-      if (!r) return;
-      const val   = isNaN(r.value) ? 'N/A' : r.value.toFixed(2) + '%';
-      const chg   = r.change || 0;
-      const chgStr = chg > 0 ? `▲ ${chg.toFixed(2)}%` : chg < 0 ? `▼ ${Math.abs(chg).toFixed(2)}%` : '— unchanged';
-      const chgClass = chg > 0 ? 'up' : chg < 0 ? 'down' : '';
-      if (r.date) anyDate = r.date;
-      grid.innerHTML += `
-        <div class="rate-item" style="border-left-color:${s.color}">
-          <div class="rate-item-label">${s.label}</div>
-          <div class="rate-item-value">${val}</div>
-          <div class="rate-item-change ${chgClass}">${chgStr}</div>
-        </div>`;
-    });
-
-    // FHA and VA derived from 30-year
     const r30 = data['MORTGAGE30US'];
-    grid.innerHTML += `
-      <div class="rate-item" style="border-left-color:#8B5CF6">
-        <div class="rate-item-label">FHA 30-Year (est.)</div>
-        <div class="rate-item-value">${r30 ? (r30.value - 0.2).toFixed(2) + '%' : 'N/A'}</div>
-        <div class="rate-item-change" style="color:var(--gray-500)">Lower w/ FHA backing</div>
-      </div>
-      <div class="rate-item" style="border-left-color:#E53E3E">
-        <div class="rate-item-label">VA 30-Year (est.)</div>
-        <div class="rate-item-value">${r30 ? (r30.value - 0.4).toFixed(2) + '%' : 'N/A'}</div>
-        <div class="rate-item-change" style="color:var(--gray-500)">For eligible veterans</div>
-      </div>`;
+    const r15 = data['MORTGAGE15US'];
+    const r5  = data['MORTGAGE5US'];
+    let anyDate = r30?.date || r15?.date || null;
+
+    // Helper to render a rate card
+    function rateCard(label, color, rateObj, fallbackVal, fallbackNote) {
+      const val = rateObj && !isNaN(rateObj.value) && rateObj.value !== null
+        ? rateObj.value.toFixed(2) + '%'
+        : (fallbackVal ? fallbackVal.toFixed(2) + '%' : 'N/A');
+      const chg = rateObj?.change || 0;
+      const chgStr = rateObj && !isNaN(rateObj.value)
+        ? (chg > 0 ? `▲ ${chg.toFixed(2)}%` : chg < 0 ? `▼ ${Math.abs(chg).toFixed(2)}%` : '— unchanged')
+        : (fallbackNote || '');
+      const chgClass = chg > 0 ? 'up' : chg < 0 ? 'down' : '';
+      return `
+        <div class="rate-item" style="border-left-color:${color}">
+          <div class="rate-item-label">${label}</div>
+          <div class="rate-item-value">${val}</div>
+          <div class="rate-item-change ${chgClass}" style="${!rateObj ? 'color:var(--gray-500)' : ''}">${chgStr}</div>
+        </div>`;
+    }
+
+    // Always render all 5 cards — use live data where available, estimates otherwise
+    grid.innerHTML += rateCard('30-Year Fixed', '#00897B', r30, null, '');
+    grid.innerHTML += rateCard('15-Year Fixed', '#1A3A5C', r15, r30 ? r30.value - 0.65 : null, 'est. from 30-yr');
+    grid.innerHTML += rateCard('5/1 ARM',       '#F5A623', r5,  r30 ? r30.value - 0.25 : null, 'est. from 30-yr');
+    grid.innerHTML += rateCard('FHA 30-Year (est.)', '#8B5CF6', null, r30 ? r30.value - 0.20 : null, 'Lower w/ FHA backing');
+    grid.innerHTML += rateCard('VA 30-Year (est.)',  '#E53E3E', null, r30 ? r30.value - 0.40 : null, 'For eligible veterans');
 
     if (anyDate) {
       document.getElementById('ratesUpdated').textContent = `Week of ${anyDate} · Freddie Mac via FRED · Updated Thursdays`;
@@ -1818,7 +1819,6 @@ async function fetchRates() {
     }
 
   } catch(e) {
-    // Graceful fallback — show the section but note rates unavailable
     grid.innerHTML = `
       <div class="rate-item" style="border-left-color:#CBD5E0">
         <div class="rate-item-label">Rates temporarily unavailable</div>
