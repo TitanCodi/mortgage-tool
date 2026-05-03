@@ -1770,9 +1770,9 @@ async function fetchRates() {
 
   async function fetchSeries(sid) {
     try {
-      const url = `${FRED_BASE}?series_id=${sid}&api_key=${API_KEY}&file_type=json&sort_order=desc&limit=2`;
+      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`${FRED_BASE}?series_id=${sid}&api_key=${API_KEY}&file_type=json&sort_order=desc&limit=2`)}`;
       const res = await fetch(url);
-      const data = await res.json();
+      const data = JSON.parse((await res.json()).contents);
       const obs = data.observations;
       if (!obs || obs.length === 0) return null;
       const current = parseFloat(obs[0].value);
