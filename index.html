@@ -38,10 +38,10 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 120px; }
 
   /* Offset anchor targets so sticky nav doesn't cover content */
-  #calculator, #rates, #learn, #faq { scroll-margin-top: 80px; }
+  #calculator, #rates, #learn, #faq { scroll-margin-top: 120px; }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -1121,10 +1121,10 @@
 </section>
 
 <!-- MAIN CONTENT -->
-<div class="main-wrap">
+<div class="main-wrap" id="rates">
 
   <!-- LIVE RATES -->
-  <div class="rates-bar" id="rates">
+  <div class="rates-bar">
     <div class="rates-bar-header">
       <h3>📊 This Week's Average Mortgage Rates</h3>
       <span class="rates-updated" id="ratesUpdated">Loading...</span>
@@ -1532,7 +1532,9 @@ function calculate() {
   renderAmortTable();
 
   document.getElementById('resultsSection').classList.add('visible');
-  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!window._suppressScroll) {
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function renderResults() {
@@ -1830,9 +1832,14 @@ async function fetchRates() {
 // ─── INIT ────────────────────────────────────────────────────────
 fetchRates();
 updatePMI();
-// Auto-run the calculator on load with defaults
+// Pre-calculate on load so results are ready, but do NOT scroll
 window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(calculate, 400);
+  setTimeout(() => {
+    // Run calculate but suppress the scroll-into-view
+    window._suppressScroll = true;
+    calculate();
+    window._suppressScroll = false;
+  }, 400);
 });
 </script>
 </body>
