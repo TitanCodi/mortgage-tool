@@ -35,7 +35,10 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+
+  /* Offset anchor targets so sticky nav doesn't cover content */
+  #calculator, #rates, #learn, #faq { scroll-margin-top: 72px; }
 
   body {
     font-family: 'DM Sans', sans-serif;
@@ -990,7 +993,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="#calculator">Calculator</a></li>
-      <li><a href="#rates">Today's Rates</a></li>
+      <li><a href="#rates">This Week's Rates</a></li>
       <li><a href="#learn">Learn</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#calculator" class="nav-cta">Calculate Now</a></li>
@@ -1120,7 +1123,7 @@
   <!-- LIVE RATES -->
   <div class="rates-bar" id="rates">
     <div class="rates-bar-header">
-      <h3>📊 Today's Average Mortgage Rates</h3>
+      <h3>📊 This Week's Average Mortgage Rates</h3>
       <span class="rates-updated" id="ratesUpdated">Loading...</span>
     </div>
     <div class="rates-grid" id="ratesGrid">
@@ -1756,71 +1759,68 @@ function calcExtra() {
   document.getElementById('extraResults').classList.add('visible');
 }
 
-// ─── LIVE RATES (FRED API) ───────────────────────────────────────
+// ─── LIVE RATES (via Vercel Serverless API) ──────────────────────
 async function fetchRates() {
-  const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
-  const API_KEY = 'd08fb33e641e61ba8f06e2d7ee5e00d8'; // Public demo key
+  const grid = document.getElementById('ratesGrid');
 
-  // Series: MORTGAGE30US, MORTGAGE15US, MORTGAGE5US (5/1 ARM)
-  const series = [
-    { id: 'MORTGAGE30US', label: '30-Year Fixed', color: '#00897B' },
-    { id: 'MORTGAGE15US', label: '15-Year Fixed', color: '#1A3A5C' },
-    { id: 'MORTGAGE5US',  label: '5/1 ARM',       color: '#F5A623' },
+  const seriesMeta = [
+    { id: 'MORTGAGE30US', label: '30-Year Fixed',    color: '#00897B' },
+    { id: 'MORTGAGE15US', label: '15-Year Fixed',    color: '#1A3A5C' },
+    { id: 'MORTGAGE5US',  label: '5/1 ARM',          color: '#F5A623' },
   ];
 
-  async function fetchSeries(sid) {
-    try {
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`${FRED_BASE}?series_id=${sid}&api_key=${API_KEY}&file_type=json&sort_order=desc&limit=2`)}`;
-      const res = await fetch(url);
-      const data = JSON.parse((await res.json()).contents);
-      const obs = data.observations;
-      if (!obs || obs.length === 0) return null;
-      const current = parseFloat(obs[0].value);
-      const prev = obs.length > 1 ? parseFloat(obs[1].value) : current;
-      return { value: current, change: current - prev, date: obs[0].date };
-    } catch(e) { return null; }
-  }
+  try {
+    const res = await fetch('/api/rates');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
 
-  const results = await Promise.all(series.map(s => fetchSeries(s.id)));
-  const grid = document.getElementById('ratesGrid');
-  grid.innerHTML = '';
+    grid.innerHTML = '';
+    let anyDate = null;
 
-  let anyDate = null;
-  series.forEach((s, i) => {
-    const r = results[i];
-    const val = r ? r.value.toFixed(2) + '%' : 'N/A';
-    const chg = r ? r.change : 0;
-    const chgStr = r ? (chg > 0 ? `▲ ${chg.toFixed(2)}%` : chg < 0 ? `▼ ${Math.abs(chg).toFixed(2)}%` : '— unchanged') : '';
-    const chgClass = chg > 0 ? 'up' : chg < 0 ? 'down' : '';
-    if (r && r.date) anyDate = r.date;
+    seriesMeta.forEach(s => {
+      const r = data[s.id];
+      if (!r) return;
+      const val   = isNaN(r.value) ? 'N/A' : r.value.toFixed(2) + '%';
+      const chg   = r.change || 0;
+      const chgStr = chg > 0 ? `▲ ${chg.toFixed(2)}%` : chg < 0 ? `▼ ${Math.abs(chg).toFixed(2)}%` : '— unchanged';
+      const chgClass = chg > 0 ? 'up' : chg < 0 ? 'down' : '';
+      if (r.date) anyDate = r.date;
+      grid.innerHTML += `
+        <div class="rate-item" style="border-left-color:${s.color}">
+          <div class="rate-item-label">${s.label}</div>
+          <div class="rate-item-value">${val}</div>
+          <div class="rate-item-change ${chgClass}">${chgStr}</div>
+        </div>`;
+    });
+
+    // FHA and VA derived from 30-year
+    const r30 = data['MORTGAGE30US'];
     grid.innerHTML += `
-      <div class="rate-item" style="border-left-color:${s.color}">
-        <div class="rate-item-label">${s.label}</div>
-        <div class="rate-item-value">${val}</div>
-        <div class="rate-item-change ${chgClass}">${chgStr}</div>
+      <div class="rate-item" style="border-left-color:#8B5CF6">
+        <div class="rate-item-label">FHA 30-Year (est.)</div>
+        <div class="rate-item-value">${r30 ? (r30.value - 0.2).toFixed(2) + '%' : 'N/A'}</div>
+        <div class="rate-item-change" style="color:var(--gray-500)">Lower w/ FHA backing</div>
+      </div>
+      <div class="rate-item" style="border-left-color:#E53E3E">
+        <div class="rate-item-label">VA 30-Year (est.)</div>
+        <div class="rate-item-value">${r30 ? (r30.value - 0.4).toFixed(2) + '%' : 'N/A'}</div>
+        <div class="rate-item-change" style="color:var(--gray-500)">For eligible veterans</div>
       </div>`;
-  });
 
-  // Add a couple more useful rates derived or static
-  grid.innerHTML += `
-    <div class="rate-item" style="border-left-color:#8B5CF6">
-      <div class="rate-item-label">FHA 30-Year (est.)</div>
-      <div class="rate-item-value">${results[0] ? (results[0].value - 0.2).toFixed(2) + '%' : 'N/A'}</div>
-      <div class="rate-item-change" style="color:var(--gray-500)">Lower w/ FHA backing</div>
-    </div>
-    <div class="rate-item" style="border-left-color:#E53E3E">
-      <div class="rate-item-label">VA 30-Year (est.)</div>
-      <div class="rate-item-value">${results[0] ? (results[0].value - 0.4).toFixed(2) + '%' : 'N/A'}</div>
-      <div class="rate-item-change" style="color:var(--gray-500)">For eligible veterans</div>
-    </div>
-  `;
+    if (anyDate) {
+      document.getElementById('ratesUpdated').textContent = `Week of ${anyDate} · Freddie Mac via FRED · Updated Thursdays`;
+      if (r30 && !isNaN(r30.value)) document.getElementById('rate').value = r30.value.toFixed(2);
+    }
 
-  if (anyDate) {
-    document.getElementById('ratesUpdated').textContent = `Week of ${anyDate} · Source: Freddie Mac via FRED`;
-    // Pre-fill the rate field with live 30yr rate
-    if (results[0]) document.getElementById('rate').value = results[0].value.toFixed(2);
-  } else {
-    document.getElementById('ratesUpdated').textContent = 'Rate data unavailable — check back later';
+  } catch(e) {
+    // Graceful fallback — show the section but note rates unavailable
+    grid.innerHTML = `
+      <div class="rate-item" style="border-left-color:#CBD5E0">
+        <div class="rate-item-label">Rates temporarily unavailable</div>
+        <div class="rate-item-value" style="font-size:1rem;color:#718096">Check back shortly</div>
+        <div class="rate-item-change">Source: Freddie Mac via FRED</div>
+      </div>`;
+    document.getElementById('ratesUpdated').textContent = 'Unable to load rates — please refresh';
   }
 }
 
