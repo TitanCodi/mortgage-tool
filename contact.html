@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | RateCalcNow</title>
+<meta name="description" content="Contact RateCalcNow — reach out with questions, feedback, or suggestions about our free mortgage calculator tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #0A2540; --navy-mid: #1A3A5C; --teal: #00897B; --teal-light: #00BFA5; --cream: #FAFAF8; --white: #FFFFFF; --gray-100: #F4F6F8; --gray-200: #E8ECF0; --gray-500: #718096; --gray-700: #2D3748; --shadow-sm: 0 1px 3px rgba(10,37,64,0.08); --radius: 12px; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--navy); line-height: 1.6; }
+  nav { background: var(--navy); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--teal-light), var(--teal)); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .logo-text { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: white; }
+  .logo-text span { color: var(--teal-light); }
+  .nav-links { display: flex; gap: 8px; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.875rem; font-weight: 500; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; }
+  .nav-links a:hover { color: white; background: rgba(255,255,255,0.1); }
+  .page-hero { background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%); padding: 56px 24px; text-align: center; }
+  .page-hero h1 { font-family: 'DM Serif Display', serif; font-size: 2.2rem; color: white; margin-bottom: 12px; }
+  .page-hero p { color: rgba(255,255,255,0.65); font-size: 0.95rem; }
+  .main { max-width: 700px; margin: 0 auto; padding: 56px 24px 80px; }
+  .contact-card { background: white; border-radius: 16px; padding: 40px 48px; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); margin-bottom: 24px; }
+  .contact-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); margin-bottom: 10px; }
+  .contact-card p { color: var(--gray-500); font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px; }
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--gray-700); margin-bottom: 8px; }
+  input[type="text"], input[type="email"], select, textarea {
+    width: 100%; padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--navy);
+    background: var(--gray-100); transition: border-color 0.2s, background 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); background: white; }
+  textarea { resize: vertical; min-height: 130px; }
+  .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(0,137,123,0.35); }
+  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,137,123,0.45); }
+  .success-msg { display: none; background: #E6F4F1; border: 2px solid var(--teal); border-radius: 10px; padding: 20px 24px; text-align: center; color: var(--teal); font-weight: 600; margin-top: 16px; }
+  .info-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .info-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); text-align: center; }
+  .info-card-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .info-card h3 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .info-card p { font-size: 0.82rem; color: var(--gray-500); line-height: 1.5; }
+  @media (max-width: 600px) { .contact-card { padding: 28px 24px; } .info-cards { grid-template-columns: 1fr; } }
+  footer { background: var(--navy); color: rgba(255,255,255,0.6); padding: 32px 24px; text-align: center; font-size: 0.85rem; }
+  footer a { color: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/></svg></div>
+      <span class="logo-text">Rate<span>Calc</span>Now</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Calculator</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Get in Touch</h1>
+  <p>Questions, feedback, or spotted a bug? We'd love to hear from you.</p>
+</div>
+
+<div class="main">
+
+  <div class="contact-card">
+    <h2>Send Us a Message</h2>
+    <p>Fill out the form below and we'll get back to you as soon as possible. We typically respond within 1–2 business days.</p>
+
+    <form id="contactForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="jane@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <select id="subject" name="subject">
+          <option value="general">General Question</option>
+          <option value="bug">Bug Report</option>
+          <option value="feedback">Feedback / Suggestion</option>
+          <option value="calculator">Calculator Question</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Tell us what's on your mind..." required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Message →</button>
+    </form>
+    <div class="success-msg" id="successMsg">
+      ✅ Thanks for reaching out! We'll get back to you within 1–2 business days.
+    </div>
+  </div>
+
+  <div class="info-cards">
+    <div class="info-card">
+      <div class="info-card-icon">⚡</div>
+      <h3>Quick Answers</h3>
+      <p>Many questions are answered in our <a href="/#faq" style="color:var(--teal)">FAQ section</a> on the main calculator page.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">🔒</div>
+      <h3>Privacy</h3>
+      <p>We never share your contact information. See our <a href="/privacy.html" style="color:var(--teal)">Privacy Policy</a>.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 RateCalcNow. All rights reserved. &nbsp;|&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;|&nbsp; <a href="/terms.html">Terms</a> &nbsp;|&nbsp; <a href="/disclaimer.html">Disclaimer</a></p>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  // In production, replace this with your form handler (Formspree, Netlify Forms, EmailJS, etc.)
+  // Example with Formspree: set form action="https://formspree.io/f/YOUR_FORM_ID" method="POST"
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
