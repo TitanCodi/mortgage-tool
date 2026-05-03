@@ -148,9 +148,9 @@
   /* ─── HERO ────────────────────────────────────────── */
   .hero {
     background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 60%, #1B4F72 100%);
-    padding: 56px 24px 0;
+    padding: 56px 24px 48px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
   .hero::before {
     content: '';
@@ -226,8 +226,6 @@
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     position: relative;
-    top: 24px;
-    margin-bottom: -24px;
   }
   .calc-card-header {
     background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
@@ -936,11 +934,11 @@
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 24px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
     font-size: 0.8rem;
+    text-align: center;
   }
   .footer-disc {
     max-width: 1200px;
@@ -948,6 +946,7 @@
     font-size: 0.78rem;
     color: rgba(255,255,255,0.4);
     line-height: 1.6;
+    text-align: center;
   }
   .footer-brand .logo { margin-bottom: 14px; }
   .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 260px; }
@@ -1192,7 +1191,7 @@
     </div>
 
     <!-- PIE CHART + PITI -->
-    <div class="viz-row">
+    <div class="viz-row" id="piti-section">
       <div class="viz-card">
         <h3>Principal vs. Interest</h3>
         <div class="chart-wrap">
@@ -1207,14 +1206,14 @@
     </div>
 
     <!-- BI-WEEKLY COMPARISON -->
-    <div class="compare-card">
+    <div class="compare-card" id="biweekly-section">
       <h3>Monthly vs. Bi-Weekly Payments</h3>
       <p>Paying bi-weekly means one extra full payment per year — here's how much you can save.</p>
       <div class="compare-cols" id="compareCols"></div>
     </div>
 
     <!-- EXTRA PAYMENTS -->
-    <div class="extra-card">
+    <div class="extra-card" id="extra-section">
       <h3>💡 Extra Payment Accelerator</h3>
       <p>See how much time and money you can save by making additional payments toward your principal.</p>
       <div class="extra-inputs">
@@ -1431,10 +1430,10 @@
     <div>
       <h4>Calculators</h4>
       <ul>
-        <li><a href="#calculator">Mortgage Calculator</a></li>
-        <li><a href="#calculator">Extra Payment Savings</a></li>
-        <li><a href="#calculator">Bi-Weekly Comparison</a></li>
-        <li><a href="#calculator">PITI Breakdown</a></li>
+        <li><a href="#calculator" onclick="scrollTo('calculator',event)">Mortgage Calculator</a></li>
+        <li><a href="#extra-section" onclick="scrollTo('extra-section',event)">Extra Payment Savings</a></li>
+        <li><a href="#biweekly-section" onclick="scrollTo('biweekly-section',event)">Bi-Weekly Comparison</a></li>
+        <li><a href="#piti-section" onclick="scrollTo('piti-section',event)">PITI Breakdown</a></li>
       </ul>
     </div>
     <div>
@@ -1459,7 +1458,7 @@
   </div>
   <div class="footer-bottom">
     <span>© 2026 RateCalcNow. All rights reserved.</span>
-    <span>Not financial advice. See <a href="/disclaimer.html" style="color:rgba(255,255,255,0.5)">disclaimer</a>.</span>
+    <span>Not financial advice. See <a href="/disclaimer.html" style="color:rgba(255,255,255,0.5)">disclaimer</a> for full details.</span>
   </div>
   <p class="footer-disc">RateCalcNow provides mortgage calculators for informational and educational purposes only. All calculations are estimates and should not be relied upon as financial, legal, or tax advice. Mortgage rates displayed are sourced from the Federal Reserve Economic Data (FRED) and may not reflect current market rates for your specific situation. Always consult a licensed mortgage professional before making any home financing decisions.</p>
 </footer>
@@ -1469,12 +1468,27 @@
 function scrollTo(id, e) {
   if (e) e.preventDefault();
   const NAV_HEIGHT = 64;
-  const EXTRA = id === 'rates' ? 20 : 12; // extra breathing room for rates
-  const el = document.getElementById(id);
-  if (!el) return;
-  const top = el.getBoundingClientRect().top + window.pageYOffset - NAV_HEIGHT - EXTRA;
-  window.scrollTo({ top, behavior: 'smooth' });
-  history.replaceState(null, '', '#' + id);
+  const EXTRA = 20;
+
+  // If targeting a subsection inside results, make sure results are visible first
+  const subsections = ['extra-section','biweekly-section','piti-section'];
+  if (subsections.includes(id)) {
+    const resultsSection = document.getElementById('resultsSection');
+    if (resultsSection && !resultsSection.classList.contains('visible')) {
+      window._suppressScroll = true;
+      calculate();
+      window._suppressScroll = false;
+    }
+  }
+
+  // Small delay to allow DOM to update if calculate() just ran
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.pageYOffset - NAV_HEIGHT - EXTRA;
+    window.scrollTo({ top, behavior: 'smooth' });
+    history.replaceState(null, '', '#' + id);
+  }, 50);
 }
 
 // ─── STATE ───────────────────────────────────────────────────────
