@@ -23,7 +23,12 @@ export default async function handler(req, res) {
 
   async function fetchSeries(sid) {
     try {
-      const url = `${FRED_BASE}?series_id=${sid}&api_key=${API_KEY}&file_type=json&sort_order=desc&limit=2`;
+      // Get date from 60 days ago to ensure we capture the latest weekly data
+      const since = new Date();
+      since.setDate(since.getDate() - 60);
+      const sinceStr = since.toISOString().split('T')[0];
+
+      const url = `${FRED_BASE}?series_id=${sid}&api_key=${API_KEY}&file_type=json&sort_order=desc&limit=2&observation_start=${sinceStr}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`FRED returned ${response.status}`);
       const data = await response.json();
