@@ -12,6 +12,39 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230A2540'/><rect x='3' y='3' width='26' height='26' rx='6' fill='%2300897B'/><text x='16' y='22' font-family='serif' font-size='18' font-weight='bold' text-anchor='middle' fill='white'>R</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230A2540'/><rect x='3' y='3' width='26' height='26' rx='6' fill='%2300897B'/><text x='16' y='22' font-family='serif' font-size='18' font-weight='bold' text-anchor='middle' fill='white'>R</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- Google AdSense — replace ca-pub-2548921396153742 with your Publisher ID -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2548921396153742" crossorigin="anonymous"></script>
+<style>
+  /* AdSense ad slot styling */
+  .ad-slot {
+    width: 100%;
+    margin: 24px 0;
+    text-align: center;
+    min-height: 100px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    border: 1px dashed var(--gray-300);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .ad-slot::before {
+    content: 'Advertisement';
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .ad-slot ins { display: block; width: 100%; }
+</style>
 <style>
   :root {
     --navy: #0A2540;
@@ -892,11 +925,29 @@
   }
   .footer-inner {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto 40px;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 40px;
-    margin-bottom: 40px;
+  }
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.8rem;
+  }
+  .footer-disc {
+    max-width: 1200px;
+    margin: 16px auto 0;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
   }
   .footer-brand .logo { margin-bottom: 14px; }
   .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 260px; }
@@ -912,23 +963,6 @@
   footer ul li { margin-bottom: 10px; }
   footer ul a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
   footer ul a:hover { color: white; }
-  .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    font-size: 0.8rem;
-  }
-  .footer-disc {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.4);
-    max-width: 760px;
-    line-height: 1.6;
-    margin-top: 16px;
-  }
 
   /* ─── RESPONSIVE ──────────────────────────────────── */
   @media (max-width: 900px) {
@@ -988,18 +1022,18 @@
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="#" class="logo">
+    <a href="/" class="logo">
       <div class="logo-icon">
         <svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/></svg>
       </div>
       <span class="logo-text">Rate<span>Calc</span>Now</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#calculator">Calculator</a></li>
-      <li><a href="#rates">This Week's Rates</a></li>
-      <li><a href="#learn">Learn</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#calculator" class="nav-cta">Calculate Now</a></li>
+      <li><a href="#calculator" onclick="scrollTo('calculator',event)">Calculator</a></li>
+      <li><a href="#rates" onclick="scrollTo('rates',event)">This Week's Rates</a></li>
+      <li><a href="#learn" onclick="scrollTo('learn',event)">Learn</a></li>
+      <li><a href="#faq" onclick="scrollTo('faq',event)">FAQ</a></li>
+      <li><a href="#calculator" onclick="scrollTo('calculator',event)" class="nav-cta">Calculate Now</a></li>
     </ul>
   </div>
 </nav>
@@ -1120,11 +1154,8 @@
   </div>
 </section>
 
-<!-- Rates anchor sits OUTSIDE the hero so nav link clears it completely -->
-<div id="rates" style="position:relative; top:-80px; visibility:hidden; pointer-events:none;"></div>
-
 <!-- MAIN CONTENT -->
-<div class="main-wrap">
+<div class="main-wrap" id="rates">
 
   <!-- LIVE RATES -->
   <div class="rates-bar">
@@ -1135,6 +1166,17 @@
     <div class="rates-grid" id="ratesGrid">
       <div class="rate-loading">Fetching live rates from FRED / Freddie Mac...</div>
     </div>
+  </div>
+
+  <!-- AD SLOT: Below rates bar — always visible -->
+  <div class="ad-slot">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-2548921396153742"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
   <!-- RESULTS SECTION -->
@@ -1227,6 +1269,17 @@
 
 </div><!-- /main-wrap -->
 
+<!-- AD SLOT 1: Between calculator results and educational content -->
+<div class="ad-slot" style="max-width:1200px;margin:0 auto 0;padding:0 24px;">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-2548921396153742"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
 <!-- EDUCATIONAL CONTENT -->
 <section class="edu-section" id="learn">
   <div class="edu-intro">
@@ -1286,6 +1339,17 @@
     </div>
   </div>
 </section>
+
+<!-- AD SLOT 2: Between educational content and FAQ -->
+<div class="ad-slot" style="max-width:760px;margin:0 auto 32px;padding:0 24px;">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-2548921396153742"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
 <!-- FAQ -->
 <section class="faq-section" id="faq">
@@ -1356,7 +1420,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#" class="logo">
+      <a href="/" class="logo">
         <div class="logo-icon">
           <svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/></svg>
         </div>
@@ -1385,22 +1449,34 @@
     <div>
       <h4>Company</h4>
       <ul>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/privacy">Privacy Policy</a></li>
-        <li><a href="/disclaimer">Disclaimer</a></li>
-        <li><a href="/terms">Terms of Use</a></li>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+        <li><a href="/privacy.html">Privacy Policy</a></li>
+        <li><a href="/disclaimer.html">Disclaimer</a></li>
+        <li><a href="/terms.html">Terms of Use</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 RateCalcNow. All rights reserved.</span>
-    <span>Not financial advice. See <a href="/disclaimer" style="color:rgba(255,255,255,0.5)">disclaimer</a>.</span>
+    <span>Not financial advice. See <a href="/disclaimer.html" style="color:rgba(255,255,255,0.5)">disclaimer</a>.</span>
   </div>
   <p class="footer-disc">RateCalcNow provides mortgage calculators for informational and educational purposes only. All calculations are estimates and should not be relied upon as financial, legal, or tax advice. Mortgage rates displayed are sourced from the Federal Reserve Economic Data (FRED) and may not reflect current market rates for your specific situation. Always consult a licensed mortgage professional before making any home financing decisions.</p>
 </footer>
 
 <script>
+// ─── SMOOTH SCROLL WITH NAV OFFSET ──────────────────────────────
+function scrollTo(id, e) {
+  if (e) e.preventDefault();
+  const NAV_HEIGHT = 64;
+  const EXTRA = id === 'rates' ? 20 : 12; // extra breathing room for rates
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.pageYOffset - NAV_HEIGHT - EXTRA;
+  window.scrollTo({ top, behavior: 'smooth' });
+  history.replaceState(null, '', '#' + id);
+}
+
 // ─── STATE ───────────────────────────────────────────────────────
 let calcState = {};
 let payFreq = 'monthly';
