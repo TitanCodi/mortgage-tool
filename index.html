@@ -204,10 +204,22 @@
   }
   .hero-stats {
     display: flex;
-    gap: 32px;
+    flex-direction: row;
+    gap: 0;
     padding-top: 16px;
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-bottom: 56px;
+  }
+  .hero-stats > div {
+    flex: 1;
+    padding-right: 16px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    margin-right: 16px;
+  }
+  .hero-stats > div:last-child {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0;
   }
   .hero-stat-val {
     font-family: 'DM Serif Display', serif;
@@ -219,6 +231,12 @@
     font-size: 0.8rem;
     color: rgba(255,255,255,0.5);
     display: block;
+  }
+  @media (max-width: 600px) {
+    .hero-stats { padding-bottom: 32px; gap: 0; }
+    .hero-stat-val { font-size: 1.2rem; }
+    .hero-stat-lbl { font-size: 0.72rem; }
+    .hero-stats > div { padding-right: 12px; margin-right: 12px; }
   }
 
   /* ─── CALCULATOR CARD ─────────────────────────────── */
@@ -989,7 +1007,6 @@
     .results-grid { grid-template-columns: 1fr; }
     .extra-inputs { grid-template-columns: 1fr; }
     .extra-results-grid { grid-template-columns: 1fr; }
-    .hero-stats { flex-direction: column; gap: 16px; }
     .footer-inner { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
     nav .nav-links { display: none; }
