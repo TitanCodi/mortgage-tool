@@ -1,4 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.ratecalcnow.com" }],
+      "destination": "https://ratecalcnow.com/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/$1"
+    }
+  ],
   "crons": [
     {
       "path": "/api/rates",
