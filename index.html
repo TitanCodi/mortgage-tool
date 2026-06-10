@@ -479,9 +479,10 @@
           </div>
           <div class="form-group">
             <div class="form-label"><span>Home Insurance</span></div>
-            <div class="input-wrap has-prefix">
+            <div class="input-wrap has-prefix has-suffix">
               <span class="input-prefix">$</span>
               <input type="number" id="insurance" value="1200" min="0" step="50">
+              <span class="input-suffix">/yr</span>
             </div>
           </div>
         </div>
@@ -923,7 +924,7 @@ function renderResults() {
     <div class="result-card">
       <div class="result-card-label">Tax + Insurance + PMI</div>
       <div class="result-card-value">${fmt(tax + ins + pmiR)}/mo</div>
-      <div class="result-card-sub">Escrow portion of payment</div>
+      <div class="result-card-sub">Escrow portion · Tax ${fmt(tax)} · Ins ${fmt(ins)}</div>
     </div>
     <div class="result-card">
       <div class="result-card-label">Home Price</div>
