@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
-
+Disallow: /api/
+ 
 Sitemap: https://ratecalcnow.com/sitemap.xml
+ 
